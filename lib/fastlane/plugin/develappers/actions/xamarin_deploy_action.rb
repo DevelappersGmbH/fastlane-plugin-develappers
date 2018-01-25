@@ -62,15 +62,14 @@ module Fastlane
                     path: info_plist_file, 
                     message: "Bump version to #{version}"
                 )
-                
-                other_action.add_git_tag(tag: "iOS/#{version}")
 
                 # deploy
                 UI.important "Deploy"
 
                 other_action.pilot(
                     distribute_external: false,
-                    ipa: ipa_file
+                    ipa: ipa_file,
+                    skip_waiting_for_build_processing: true
                 )
             rescue Exception => e
                 # reraise

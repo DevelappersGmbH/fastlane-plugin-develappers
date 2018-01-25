@@ -47,7 +47,10 @@ module Fastlane
                 # deploy
                 UI.important "Deploy"
                 
-                other_action.pilot(distribute_external: false)
+                other_action.pilot(
+                    distribute_external: false,
+                    skip_waiting_for_build_processing: true
+                )
             rescue Exception => e
                 # reraise
                 UI.abort_with_message! e.message
