@@ -18,8 +18,7 @@ module Fastlane
                 solution_target_name = "#{solution_name}_iOS"
 
                 # check info plist
-                info_plist_file = params[:info_plist_file]
-                raise "Info plist file at #{info_plist_file} not found" unless File.exist?(info_plist_file) 
+                info_plist_file = Helper::InfoplistHelper.detect(params)
 
                 ### build
                 # update cerificates
@@ -30,7 +29,7 @@ module Fastlane
                 # bump version
                 UI.important "Bump version"
 
-                version = bump_version(
+                version = Helper::VersionHelper.bump_version(
                     bump_type: params[:bump_type],
                     info_plist: info_plist_file
                 )
@@ -117,56 +116,6 @@ module Fastlane
             #################
             #### Helpers ####
             #################
-
-            def self.bump_version(options)
-                bump_type = options[:bump_type]
-                info_plist = options[:info_plist]
-            
-                raise "Unknown bump type '#{bump_type}'" unless bump_type.to_s.empty? || /(major|minor|patch|build)/ =~ bump_type
-            
-                version = ""
-                build = ""
-
-                version = Helper::ShellHelper.sh(command: "/usr/libexec/PlistBuddy -c \"Print :CFBundleShortVersionString\" #{info_plist}")
-                bumped_version = ""
-            
-                if /(major|minor|patch)/ =~ bump_type
-                    major, minor, patch, *rest = version.split(".").map { |p| p.to_i }
-            
-                    if bump_type == "major"
-                    major = major + 1
-                    minor = 0
-                    patch = 0
-                    elsif bump_type == "minor"
-                    minor = minor + 1
-                    patch = 0
-                    elsif bump_type == "patch"
-                    patch = patch + 1
-                    end
-            
-                    bumped_version = "#{major}.#{minor}.#{patch}"
-
-                    UI.verbose "Bump version from #{version} to #{bumped_version}"
-            
-                    Helper::ShellHelper.sh(command: "/usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString #{bumped_version}\" #{info_plist}")
-                elsif
-                    bumped_version = version
-                end
-            
-                # Bump Build number
-                build = Helper::ShellHelper.sh(command: "/usr/libexec/PlistBuddy -c \"Print :CFBundleVersion\" #{info_plist}").to_i
-                bumped_build = build + 1
-
-                UI.verbose "Bump build from #{build} to #{bumped_build}"
-
-                Helper::ShellHelper.sh(command: "/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion #{bumped_build}\" #{info_plist}")
-
-                version_label = "v#{bumped_version}-#{bumped_build}"
-
-                UI.message "New version is now #{version_label}"
-
-                version_label
-            end
 
             def self.restore_packages(options)
                 Helper::ShellHelper.sh(command: "nuget restore #{options[:solution]}", log: false)

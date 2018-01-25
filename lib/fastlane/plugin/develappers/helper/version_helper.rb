@@ -1,6 +1,18 @@
 module Fastlane
     module Helper
         class VersionHelper
+            def self.version(options)
+                info_plist = options[:info_plist]
+
+                Helper::ShellHelper.sh(command: "/usr/libexec/PlistBuddy -c \"Print :CFBundleShortVersionString\" #{info_plist}")
+            end
+
+            def self.build(options)
+                info_plist = options[:info_plist]
+
+                Helper::ShellHelper.sh(command: "/usr/libexec/PlistBuddy -c \"Print :CFBundleVersion\" #{info_plist}").to_i
+            end
+
             def self.bump_version(options)
                 bump_type = options[:bump_type]
                 info_plist = options[:info_plist]
@@ -10,7 +22,7 @@ module Fastlane
                 version = ""
                 build = ""
 
-                version = Helper::ShellHelper.sh(command: "/usr/libexec/PlistBuddy -c \"Print :CFBundleShortVersionString\" #{info_plist}")
+                version = version(options)
                 bumped_version = ""
             
                 if /(major|minor|patch)/ =~ bump_type
@@ -37,7 +49,7 @@ module Fastlane
                 end
             
                 # Bump Build number
-                build = Helper::ShellHelper.sh(command: "/usr/libexec/PlistBuddy -c \"Print :CFBundleVersion\" #{info_plist}").to_i
+                build = build(options)
                 bumped_build = build + 1
 
                 UI.verbose "Bump build from #{build} to #{bumped_build}"

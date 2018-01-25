@@ -7,15 +7,7 @@ module Fastlane
                 scheme = params[:scheme_name]
 
                 # info plist
-                info_plist = params[:info_plist_file]
-
-                unless info_plist.nil?
-                    raise "Expected info plist file at #{info_plist}" unless File.exist?(info_plist)
-                else
-                    info_plist = "./#{scheme}/info.plist"
-
-                    raise "Expected info plist file at #{info_plist}. Path was derived from schema name." unless File.exist?(info_plist)
-                end
+                info_plist = Helper::InfoplistHelper.detect(params)
                 
                 ### build
                 # fastlane and pod update
