@@ -15,7 +15,7 @@ module Fastlane
                 other_action.update_fastlane
                 
                 UI.important "Pod update"
-                other_action.cocoapods
+                other_action.cocoapods(repo_update: true)
 
                 # update cerificates
                 UI.important "Update cerificates"
