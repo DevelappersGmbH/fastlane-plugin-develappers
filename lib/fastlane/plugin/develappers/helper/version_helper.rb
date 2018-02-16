@@ -1,21 +1,28 @@
 module Fastlane
     module Helper
         class VersionHelper
+            require 'shellwords'
+
             def self.version(options)
                 info_plist = options[:info_plist]
+                escaped_info_plist = Shellwords.shellescape info_plist 
 
-                Helper::ShellHelper.sh(command: "/usr/libexec/PlistBuddy -c \"Print :CFBundleShortVersionString\" #{info_plist}")
+                UI.verbose "Version from #{escaped_info_plist}"
+
+                Helper::ShellHelper.sh(command: "/usr/libexec/PlistBuddy -c \"Print :CFBundleShortVersionString\" #{escaped_info_plist}")
             end
 
             def self.build(options)
                 info_plist = options[:info_plist]
+                escaped_info_plist = Shellwords.shellescape info_plist 
 
-                Helper::ShellHelper.sh(command: "/usr/libexec/PlistBuddy -c \"Print :CFBundleVersion\" #{info_plist}").to_i
+                Helper::ShellHelper.sh(command: "/usr/libexec/PlistBuddy -c \"Print :CFBundleVersion\" #{escaped_info_plist}").to_i
             end
 
             def self.bump_version(options)
                 bump_type = options[:bump_type]
                 info_plist = options[:info_plist]
+                escaped_info_plist = Shellwords.shellescape info_plist 
             
                 raise "Unknown bump type '#{bump_type}'" unless bump_type.to_s.empty? || /(major|minor|patch|build)/ =~ bump_type
             
@@ -43,7 +50,7 @@ module Fastlane
 
                     UI.verbose "Bump version from #{version} to #{bumped_version}"
             
-                    Helper::ShellHelper.sh(command: "/usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString #{bumped_version}\" #{info_plist}")
+                    Helper::ShellHelper.sh(command: "/usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString #{bumped_version}\" #{escaped_info_plist}")
                 elsif
                     bumped_version = version
                 end
@@ -54,7 +61,7 @@ module Fastlane
 
                 UI.verbose "Bump build from #{build} to #{bumped_build}"
 
-                Helper::ShellHelper.sh(command: "/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion #{bumped_build}\" #{info_plist}")
+                Helper::ShellHelper.sh(command: "/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion #{bumped_build}\" #{escaped_info_plist}")
 
                 version_label = "v#{bumped_version}-#{bumped_build}"
 
