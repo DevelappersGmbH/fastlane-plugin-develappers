@@ -10,12 +10,9 @@ module Fastlane
                 info_plist = Helper::InfoplistHelper.detect(params)
                 
                 ### build
-                # fastlane and pod update
-                UI.important "Fastlane update"
-                other_action.update_fastlane
-                
-                UI.important "Pod update"
-                other_action.cocoapods(repo_update: true)
+                # pod install
+                UI.important "Pod install"
+                other_action.cocoapods(repo_update: false)
 
                 # update cerificates
                 UI.important "Update cerificates"
