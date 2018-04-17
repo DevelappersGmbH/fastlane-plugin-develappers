@@ -8,6 +8,9 @@ module Fastlane
 
                 # info plist
                 info_plist = Helper::InfoplistHelper.detect(params)
+
+                # version
+                xcode_version = params[:xcode_version]
                 
                 ### build
                 # pod install
@@ -16,7 +19,7 @@ module Fastlane
 
                 # update cerificates
                 UI.important "Update cerificates"
-                
+
                 other_action.match type: "appstore"
 
                 # bump version
@@ -32,6 +35,12 @@ module Fastlane
             
                 # build application
                 UI.important "Build application"
+
+                unless xcode_version.nil?
+                    UI.message "Set xcode version to #{xcode_version}"
+                    xcode_path = other_action.xcode_install(version: xcode_version)
+                    other_action.xcode_select(xcode_path)
+                end
 
                 # detect workspace and use absolute path
                 gym_config = {}
@@ -85,7 +94,8 @@ module Fastlane
                         type: String),
 
                     # only xcode build
-                    FastlaneCore::ConfigItem.new(key: :scheme_name, env_name: "BUILD_XCODE_SCHEME_NAME", description: "Name of scheme", type: String)
+                    FastlaneCore::ConfigItem.new(key: :scheme_name, env_name: "BUILD_XCODE_SCHEME_NAME", description: "Name of scheme", type: String),
+                    FastlaneCore::ConfigItem.new(key: :xcode_version, env_name: "BUILD_XCODE_VERSION", description: "Xcode version (e.g. 9.1, 9.2)", type: String, optional: true)
                 ]
             end
 

@@ -36,14 +36,14 @@ module Fastlane
                     major, minor, patch, *rest = version.split(".").map { |p| p.to_i }
             
                     if bump_type == "major"
-                    major = major + 1
-                    minor = 0
-                    patch = 0
+                        major = major + 1
+                        minor = 0
+                        patch = 0
                     elsif bump_type == "minor"
-                    minor = minor + 1
-                    patch = 0
+                        minor = minor + 1
+                        patch = 0
                     elsif bump_type == "patch"
-                    patch = patch + 1
+                        patch = patch + 1
                     end
             
                     bumped_version = "#{major}.#{minor}.#{patch}"
