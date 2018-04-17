@@ -10,7 +10,14 @@ module Fastlane
                 info_plist = Helper::InfoplistHelper.detect(params)
 
                 # version
-                xcode_version = params[:xcode_version]
+                xcode_version = params[:version]
+
+                # app identifier and team name
+                app_identifier = params[:app_identifier]
+                team_name = params[:team_name]
+
+                # is build with multiple schemes?
+                is_multiple_schemes_build = !app_identifier.nil? && !team_name.nil?
                 
                 ### build
                 # pod install
@@ -20,7 +27,16 @@ module Fastlane
                 # update cerificates
                 UI.important "Update cerificates"
 
-                other_action.match type: "appstore"
+                match_options = {type: "appstore"}
+                
+                match_options[:app_identifier] = app_identifier unless app_identifier.nil?
+
+                unless team_name.nil?
+                    match_options[:team_name] = team_name
+                    match_options[:git_branch] = team_name.gsub(' ', '_')
+                end
+
+                other_action.match match_options
 
                 # bump version
                 UI.important "Bump version"
@@ -31,8 +47,15 @@ module Fastlane
                 )
             
                 other_action.commit_version_bump(force: true, message: "Bumped version to #{version}")
-                other_action.add_git_tag(tag: "iOS/#{version}")
-            
+
+                if is_multiple_schemes_build
+                    # tag commit with '[scheme]/[version]'
+                    other_action.add_git_tag(tag: "#{scheme.gsub(' ', '_')}/#{version}")
+                else
+                    # tag commit with 'iOS/[version]'
+                    other_action.add_git_tag(tag: "iOS/#{version}")
+                end
+
                 # build application
                 UI.important "Build application"
 
@@ -55,7 +78,9 @@ module Fastlane
                 
                 other_action.pilot(
                     distribute_external: false,
-                    skip_waiting_for_build_processing: true
+                    skip_waiting_for_build_processing: true,
+                    app_identifier: app_identifier,
+                    team_name: team_name
                 )
             rescue Exception => e
                 # reraise
@@ -95,7 +120,11 @@ module Fastlane
 
                     # only xcode build
                     FastlaneCore::ConfigItem.new(key: :scheme_name, env_name: "BUILD_XCODE_SCHEME_NAME", description: "Name of scheme", type: String),
-                    FastlaneCore::ConfigItem.new(key: :xcode_version, env_name: "BUILD_XCODE_VERSION", description: "Xcode version (e.g. 9.1, 9.2)", type: String, optional: true)
+                    FastlaneCore::ConfigItem.new(key: :version, env_name: "BUILD_XCODE_VERSION", description: "Xcode version (e.g. 9.1, 9.2)", type: String, optional: true),
+
+                    # useful for builds with multiple schemes
+                    FastlaneCore::ConfigItem.new(key: :app_identifier, env_name: "BUILD_XCODE_APP_IDENTIFER", description: "App identifier", type: String, optional: true),
+                    FastlaneCore::ConfigItem.new(key: :team_name, env_name: "BUILD_XCODE_TEAM_NAME", description: "Team name in itunes connect", type: String, optional: true)
                 ]
             end
 
