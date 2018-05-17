@@ -5,6 +5,7 @@ module Fastlane
                 ### handle params
                 # scheme
                 scheme = params[:scheme_name]
+                configuration = params[:configuration]
 
                 # info plist
                 info_plist = Helper::InfoplistHelper.detect(params)
@@ -71,7 +72,11 @@ module Fastlane
                 workspace = gym_config[:workspace]
                 workspace = File.realdirpath(workspace)
 
-                other_action.gym(scheme: scheme, workspace: workspace)
+                other_action.gym(
+                    scheme: scheme, 
+                    configuration: configuration, 
+                    workspace: workspace
+                )
 
                 # deploy
                 UI.important "Deploy"
@@ -120,6 +125,7 @@ module Fastlane
 
                     # only xcode build
                     FastlaneCore::ConfigItem.new(key: :scheme_name, env_name: "BUILD_XCODE_SCHEME_NAME", description: "Name of scheme", type: String),
+                    FastlaneCore::ConfigItem.new(key: :configuration, env_name: "BUILD_XCODE_CONFIGURATION", description: "Build configuration", type: String, optional: true, default_value: "Release"),
                     FastlaneCore::ConfigItem.new(key: :version, env_name: "BUILD_XCODE_VERSION", description: "Xcode version (e.g. 9.1, 9.2)", type: String, optional: true),
 
                     # useful for builds with multiple schemes
