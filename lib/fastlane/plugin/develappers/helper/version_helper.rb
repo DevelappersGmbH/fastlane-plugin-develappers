@@ -34,6 +34,11 @@ module Fastlane
             
                 if /(major|minor|patch)/ =~ bump_type
                     major, minor, patch, *rest = version.split(".").map { |p| p.to_i }
+
+                    # set default when nil
+                    major = major || 0
+                    minor = minor || 0
+                    patch = patch || 0
             
                     if bump_type == "major"
                         major = major + 1
