@@ -6,6 +6,7 @@ module Fastlane
                 
                 # version
                 xcode_version = params[:version]
+                scheme_name = params[:scheme_name]
                 
                 ### build
                 # pod install
@@ -28,7 +29,7 @@ module Fastlane
                 workspace = empty_config[:workspace]
                 workspace = File.realdirpath(workspace)
 
-                other_action.scan(workspace: workspace)
+                other_action.scan(workspace: workspace, scheme: scheme_name)
             rescue Exception => e
                 # reraise
                 UI.abort_with_message! e.message
@@ -51,6 +52,7 @@ module Fastlane
 
             def self.available_options
                 [
+                    FastlaneCore::ConfigItem.new(key: :scheme_name, env_name: "BUILD_XCODE_SCHEME_NAME", description: "Name of scheme", type: String),
                     FastlaneCore::ConfigItem.new(key: :version, env_name: "BUILD_XCODE_VERSION", description: "Xcode version (e.g. 9.1, 9.2)", type: String, optional: true)
                 ]
             end
