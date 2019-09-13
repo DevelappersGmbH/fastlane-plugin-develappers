@@ -7,9 +7,6 @@ module Fastlane
                 scheme = params[:scheme_name]
                 configuration = params[:configuration]
 
-                # info plist
-                info_plist = Helper::InfoplistHelper.detect(params)
-
                 # version
                 xcode_version = params[:version]
 
@@ -42,10 +39,7 @@ module Fastlane
                 # bump version
                 UI.important "Bump version"
 
-                version = Helper::VersionHelper.bump_version(
-                    bump_type: params[:bump_type],
-                    info_plist: info_plist
-                )
+                version = Helper::VersionHelper.bump_version(bump_type: params[:bump_type])
             
                 other_action.commit_version_bump(force: true, message: "Bumped version to #{version}")
 
@@ -112,7 +106,7 @@ module Fastlane
                     FastlaneCore::ConfigItem.new(
                         key: :info_plist_file, 
                         env_name: "BUILD_INFO_PLIST_FILE", 
-                        description: "Path to info plist", 
+                        description: "Path to info plist !!! No need to set anymore !!!", 
                         optional: true,
                         type: String),
                     FastlaneCore::ConfigItem.new(
