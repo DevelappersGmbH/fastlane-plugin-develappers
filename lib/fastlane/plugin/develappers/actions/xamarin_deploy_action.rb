@@ -29,7 +29,7 @@ module Fastlane
                 # bump version
                 UI.important "Bump version"
 
-                version = Helper::VersionHelper.bump_version(
+                version = Helper::ManuelVersionHelper.bump_version(
                     bump_type: params[:bump_type],
                     info_plist: info_plist_file
                 )
