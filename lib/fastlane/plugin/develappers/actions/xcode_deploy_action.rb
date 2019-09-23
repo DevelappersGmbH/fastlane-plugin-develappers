@@ -39,7 +39,7 @@ module Fastlane
                 # bump version
                 UI.important "Bump version"
 
-                version = Helper::VersionHelper.bump_version(bump_type: params[:bump_type])
+                version = Helper::VersionHelper.bump_version({ bump_type: params[:bump_type], configuration: configuration })
             
                 other_action.commit_version_bump(force: true, message: "Bumped version to #{version}")
 

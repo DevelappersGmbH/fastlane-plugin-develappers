@@ -3,7 +3,11 @@ module Fastlane
         class VersionHelper
             require 'shellwords'
 
-            def self.info_plists() 
+            def self.info_plists(options)
+                configuration = options[:configuration]
+
+                UI.important "Using configuration #{configuration}"
+                
                 # find the repo root path
                 repo_path = Actions.sh('git rev-parse --show-toplevel').strip
                 repo_pathname = Pathname.new(repo_path)
@@ -30,7 +34,7 @@ module Fastlane
                 # find the info_plist files
                 project = Xcodeproj::Project.open(xcodeproj_path)
                 info_plist_files = project.objects.select do |object|
-                    object.isa == 'XCBuildConfiguration'
+                    object.isa == 'XCBuildConfiguration' && (configuration.nil? || object.name == configuration)  
                 end.map(&:to_hash).map do |object_hash|
                     object_hash['buildSettings']
                 end.select do |build_settings|
@@ -62,7 +66,7 @@ module Fastlane
 
             def self.bump_version(options)
                 bump_type = options[:bump_type]
-                info_plists = self.info_plists
+                info_plists = self.info_plists(options)
             
                 raise "Unknown bump type '#{bump_type}'" unless bump_type.to_s.empty? || /(major|minor|patch|build)/ =~ bump_type
             
