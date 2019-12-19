@@ -42,7 +42,7 @@ module Fastlane
                 end.map do |build_settings|
                     build_settings['INFOPLIST_FILE']
                 end.uniq.map do |info_plist_path|
-                    Pathname.new(File.expand_path(File.join(xcodeproj_path, '..', info_plist_path))).relative_path_from(repo_pathname).to_s
+                    Pathname.new(File.expand_path(File.join(xcodeproj_path, '..', info_plist_path))).to_s
                 end
 
                 info_plist_files
