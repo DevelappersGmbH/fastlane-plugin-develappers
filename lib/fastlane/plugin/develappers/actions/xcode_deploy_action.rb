@@ -42,16 +42,6 @@ module Fastlane
 
                 version = Helper::VersionHelper.bump_version({ bump_type: params[:bump_type], configuration: configuration })
             
-                other_action.commit_version_bump(force: true, message: "Bumped version to #{version}")
-
-                if is_multiple_schemes_build
-                    # tag commit with '[scheme]/[version]'
-                    other_action.add_git_tag(tag: "#{scheme.gsub(' ', '_')}/#{version}")
-                else
-                    # tag commit with 'iOS/[version]'
-                    other_action.add_git_tag(tag: "iOS/#{version}")
-                end
-
                 # build application
                 UI.important "Build application"
 
@@ -82,6 +72,17 @@ module Fastlane
                     app_identifier: app_identifier,
                     team_name: team_name
                 )
+
+                # Commit changes
+                other_action.commit_version_bump(force: true, message: "Bumped version to #{version}")
+                
+                if is_multiple_schemes_build
+                    # tag commit with '[scheme]/[version]'
+                    other_action.add_git_tag(tag: "#{scheme.gsub(' ', '_')}/#{version}")
+                else
+                    # tag commit with 'iOS/[version]'
+                    other_action.add_git_tag(tag: "iOS/#{version}")
+                end
             rescue Exception => e
                 # reraise
                 UI.abort_with_message! e.message
