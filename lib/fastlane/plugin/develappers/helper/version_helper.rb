@@ -6,7 +6,7 @@ module Fastlane
             def self.info_plists(options)
                 configuration = options[:configuration]
 
-                UI.important "Using configuration #{configuration}"
+                UI.message "Using configuration #{configuration}"
                 
                 # find the repo root path
                 repo_path = Actions.sh('git rev-parse --show-toplevel').strip

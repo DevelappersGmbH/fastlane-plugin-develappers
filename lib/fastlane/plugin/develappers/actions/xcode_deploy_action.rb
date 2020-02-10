@@ -28,6 +28,7 @@ module Fastlane
                 match_options = {type: "appstore"}
                 
                 match_options[:app_identifier] = app_identifier unless app_identifier.nil?
+                match_options[:readonly] = true
 
                 unless team_name.nil?
                     match_options[:team_name] = team_name
