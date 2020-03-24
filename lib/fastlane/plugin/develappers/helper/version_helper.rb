@@ -69,6 +69,10 @@ module Fastlane
                 info_plists = self.info_plists(options)
             
                 raise "Unknown bump type '#{bump_type}'" unless bump_type.to_s.empty? || /(major|minor|patch|build)/ =~ bump_type
+                raise "No infoplist found! Check provided configuration" unless info_plists.any?
+
+                UI.message "bump version in info plists:"
+                UI.message info_plists
             
                 version = ""
                 build = ""
