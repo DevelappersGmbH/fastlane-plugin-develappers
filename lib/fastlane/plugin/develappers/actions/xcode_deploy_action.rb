@@ -19,8 +19,10 @@ module Fastlane
                 
                 ### build
                 # pod install
-                UI.important "Pod install"
-                other_action.cocoapods(repo_update: false)
+                if params[:pod_install]
+                    UI.important "Pod install"
+                    other_action.cocoapods(repo_update: false)
+                end
 
                 # update cerificates
                 UI.important "Update cerificates"
@@ -123,6 +125,7 @@ module Fastlane
                     FastlaneCore::ConfigItem.new(key: :scheme_name, env_name: "BUILD_XCODE_SCHEME_NAME", description: "Name of scheme", type: String),
                     FastlaneCore::ConfigItem.new(key: :configuration, env_name: "BUILD_XCODE_CONFIGURATION", description: "Build configuration", type: String, optional: true, default_value: "Release"),
                     FastlaneCore::ConfigItem.new(key: :version, env_name: "BUILD_XCODE_VERSION", description: "Xcode version (e.g. 9.1, 9.2)", type: String, optional: true),
+                    FastlaneCore::ConfigItem.new(key: :pod_install, env_name: "BUILD_XCODE_POD_INSTALL", description: "Should perform pod install", type: Boolean, default_value: true, optional: true),
 
                     # useful for builds with multiple schemes
                     FastlaneCore::ConfigItem.new(key: :app_identifier, env_name: "BUILD_XCODE_APP_IDENTIFER", description: "App identifier", type: String, optional: true),
