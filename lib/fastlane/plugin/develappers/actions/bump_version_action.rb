@@ -3,7 +3,7 @@ module Fastlane
         class BumpVersionAction < Action
             def self.run(params)
                 UI.important "Bump version"
-                version = Helper::VersionHelper.bump_version({ bump_type: params[:bump_type], configuration: params[:configuration] })
+                Helper::VersionHelper.bump_version({ bump_type: params[:bump_type], configuration: params[:configuration] })
             rescue Exception => e
                 # reraise
                 UI.abort_with_message! e.message
@@ -18,7 +18,7 @@ module Fastlane
             end
 
             def self.return_value
-                nil
+                "version name"
             end
 
             def self.details
