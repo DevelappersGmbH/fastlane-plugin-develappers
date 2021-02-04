@@ -24,7 +24,7 @@ module Fastlane
                 # update cerificates
                 UI.important "Update cerificates"
 
-                other_action.match type: "appstore"
+                other_action.match(type: "appstore", readonly: true)
 
                 # bump version
                 UI.important "Bump version"
