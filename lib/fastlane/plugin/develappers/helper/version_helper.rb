@@ -41,6 +41,8 @@ module Fastlane
                     build_settings.key?('INFOPLIST_FILE')
                 end.map do |build_settings|
                     build_settings['INFOPLIST_FILE']
+                end.select do |info_plist_path|
+                    !info_plist_path.nil? && !info_plist_path.empty?
                 end.uniq.map do |info_plist_path|
                     Pathname.new(File.expand_path(File.join(xcodeproj_path, '..', info_plist_path))).to_s
                 end
@@ -66,6 +68,7 @@ module Fastlane
 
             def self.bump_version(options)
                 bump_type = options[:bump_type]
+                main_info_plist_indicator = options[:main_info_plist_indicator]
                 info_plists = self.info_plists(options)
             
                 raise "Unknown bump type '#{bump_type}'" unless bump_type.to_s.empty? || /(major|minor|patch|build)/ =~ bump_type
@@ -77,7 +80,15 @@ module Fastlane
                 version = ""
                 build = ""
 
-                version = version(info_plist: info_plists.first)
+                if !main_info_plist_indicator.nil?
+                    main_info_plist = info_plists.detect { |p| p.include? main_info_plist_indicator } || info_plists.first
+                    UI.message "Main info plist is #{main_info_plist} (first matching #{main_info_plist_indicator})"
+                else
+                    main_info_plist = info_plists.first
+                    UI.message "Main info plist is #{main_info_plist}"
+                end
+
+                version = version(info_plist: main_info_plist)
                 bumped_version = ""
 
                 if /(major|minor|patch)/ =~ bump_type
@@ -112,7 +123,7 @@ module Fastlane
                 end
             
                 # Bump Build number
-                build = build(info_plist: info_plists.first)
+                build = build(info_plist: main_info_plist)
                 bumped_build = build + 1
 
                 UI.verbose "Bump build from #{build} to #{bumped_build}"
