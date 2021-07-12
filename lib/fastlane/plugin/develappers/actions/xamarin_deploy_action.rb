@@ -3,6 +3,8 @@ module Fastlane
         class XamarinDeployAction < Action
             def self.run(params)
                 ### handle params
+                app_identifier = params[:app_identifier]
+
                 # solution file
                 solution_folder = params[:solution_folder]
                 solution_name = params[:solution_name]
@@ -27,7 +29,11 @@ module Fastlane
                 # update cerificates
                 UI.important "Update cerificates"
 
-                other_action.match(type: "appstore", readonly: true)
+                other_action.match(
+                    type: "appstore", 
+                    app_identifier: app_identifier,
+                    readonly: true
+                )
 
                 # bump version
                 UI.important "Bump version"
@@ -72,8 +78,9 @@ module Fastlane
 
                 other_action.pilot(
                     distribute_external: false,
+                    skip_waiting_for_build_processing: true,
+                    app_identifier: app_identifier,
                     ipa: ipa_file,
-                    skip_waiting_for_build_processing: true
                 )
             rescue Exception => e
                 # reraise
@@ -109,7 +116,8 @@ module Fastlane
                     # only xamarin build
                     FastlaneCore::ConfigItem.new(key: :solution_name, env_name: "BUILD_XAMARIN_SOLUTION_FOLDER", description: "Name of solution (without *.sln)", type: String),
                     FastlaneCore::ConfigItem.new(key: :solution_folder, env_name: "BUILD_XAMARIN_SOLUTION_FOLDER", description: "Relative (!) path to folder containing solution file (*.sln)", type: String),
-                    FastlaneCore::ConfigItem.new(key: :configuration, env_name: "BUILD_XAMARIN_CONFIGURATION", description: "Build configuration", type: String, optional: true, default_value: "Release")
+                    FastlaneCore::ConfigItem.new(key: :configuration, env_name: "BUILD_XAMARIN_CONFIGURATION", description: "Build configuration", type: String, optional: true, default_value: "Release"),
+                    FastlaneCore::ConfigItem.new(key: :app_identifier, env_name: "BUILD_XAMARIN_APP_IDENTIFER", description: "App identifier", type: String, optional: true),
                 ]
             end
 
