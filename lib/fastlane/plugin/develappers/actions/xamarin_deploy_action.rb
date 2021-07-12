@@ -6,7 +6,7 @@ module Fastlane
                 # solution file
                 solution_folder = params[:solution_folder]
                 solution_name = params[:solution_name]
-
+                
                 solution_file = "#{solution_folder}#{solution_name}.sln"
 
                 raise "Solution file at #{solution_file} not found" unless File.exist?(solution_file)
@@ -16,6 +16,9 @@ module Fastlane
 
                 # solution target
                 solution_target_name = "#{solution_name}_iOS"
+
+                # configuration
+                configuration = params[:configuration]
 
                 # check info plist
                 info_plist_file = Helper::InfoplistHelper.detect(params)
@@ -49,7 +52,8 @@ module Fastlane
                 ipa_file = build_release(
                     app_name: solution_app_name,
                     solution: solution_file,
-                    targets: solution_target_name
+                    targets: solution_target_name,
+                    configuration: configuration
                 )
 
                 UI.message "Successfully builded solution"
@@ -104,7 +108,8 @@ module Fastlane
 
                     # only xamarin build
                     FastlaneCore::ConfigItem.new(key: :solution_name, env_name: "BUILD_XAMARIN_SOLUTION_FOLDER", description: "Name of solution (without *.sln)", type: String),
-                    FastlaneCore::ConfigItem.new(key: :solution_folder, env_name: "BUILD_XAMARIN_SOLUTION_FOLDER", description: "Relative (!) path to folder containing solution file (*.sln)", type: String)
+                    FastlaneCore::ConfigItem.new(key: :solution_folder, env_name: "BUILD_XAMARIN_SOLUTION_FOLDER", description: "Relative (!) path to folder containing solution file (*.sln)", type: String),
+                    FastlaneCore::ConfigItem.new(key: :configuration, env_name: "BUILD_XAMARIN_CONFIGURATION", description: "Build configuration", type: String, optional: true, default_value: "Release")
                 ]
             end
 
@@ -127,7 +132,7 @@ module Fastlane
                 msbuild(
                     solution: options[:solution],
                     targets: [options[:targets]],
-                    configuration: "Release",
+                    configuration: options[:configuration],
                     platform: "iPhone",
                     android_home: "",
                     additional_arguments: [
