@@ -10,7 +10,9 @@ module Fastlane
                 tag_prefix = "iOS"
                 tag_prefix = "iOS/#{configuration}" unless configuration.nil?
 
-                if !output.eql?("code")
+                should_export = !params[:export_file].nil?
+
+                if !output.eql?("code") || should_export
 
                     # prev. version tag in git
                     UI.message "Searching Tag matching '#{tag_prefix}/*'"
@@ -28,9 +30,25 @@ module Fastlane
                     
                 end
 
-                if !output.eql?("name")
+                if !output.eql?("name") || should_export
                     build = other_action.latest_testflight_build_number(app_identifier: params[:app_identifier])
                     build += 1
+                end
+
+                if !output.eql?("tagname") || should_export
+                    tag_name = "#{tag_prefix}/v#{version_name}-#{build}"
+                end
+
+                if should_export
+                    export_file_path = params[:export_file]
+
+                    File.open(export_file_path, 'w') { |file| 
+                        file.puts("VERSION_NAME=#{version_name}")
+                        file.puts("VERSION_CODE=#{build}")
+                        file.puts("TAG_NAME=#{tag_name}")
+                    }
+
+                    UI.important "VERSION_NAME, VERSION_CODE and TAG_NAME written to file #{export_file_path}"
                 end
 
                 if output.eql?("name")
@@ -38,7 +56,7 @@ module Fastlane
                 elsif output.eql?("code")
                     return build
                 elsif output.eql?("tagname")
-                    return "#{tag_prefix}/v#{version_name}-#{build}"
+                    return tag_name
                 else
                     return "#{version_name}-#{build}"
                 end
@@ -66,7 +84,8 @@ module Fastlane
                     FastlaneCore::ConfigItem.new(key: :app_identifier, env_name: "APP_VERSION_APP_IDENTIFER", description: "App identifier", type: String),
 
                     FastlaneCore::ConfigItem.new(key: :configuration, env_name: "APP_VERSION_CONFIGURATION", description: "Build configuration", type: String, optional: true, default_value: "Release"),
-                    FastlaneCore::ConfigItem.new(key: :output, description: "Output, options are Full|Name|Code|Tagname", type: String, optional: true, default_value: "Full")
+                    FastlaneCore::ConfigItem.new(key: :output, description: "Output, options are Full|Name|Code|Tagname", type: String, optional: true, default_value: "Full"),
+                    FastlaneCore::ConfigItem.new(key: :export_file, description: "If a file is specified, the version information is exported to the file", type: String, optional: true)
                 ]
             end
 
