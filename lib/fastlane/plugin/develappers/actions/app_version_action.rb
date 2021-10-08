@@ -16,8 +16,11 @@ module Fastlane
           # prev. version tag in git
           UI.message "Searching Tag matching '#{tag_prefix}/*'"
 
-          tag_name = `git describe --tags --match "#{tag_prefix}/*" --abbrev=0`
-          match = tag_name.match(/^.*v([.\d]*)-?\d*$/s)
+          tag_name = `git describe --tags --match "#{tag_prefix}/*" --abbrev=0`.strip!
+
+          UI.message "Tag '#{tag_name}' found" unless tag_name.empty?
+
+          match = tag_name.match(/^.*\/([.\d]*)-?\d*$/s)
 
           if match.nil?
             version_name = '0.1.0'
@@ -34,7 +37,7 @@ module Fastlane
           build += 1
         end
 
-        tag_name = "#{tag_prefix}/v#{version_name}-#{build}" if !output.eql?('tagname') || should_export
+        tag_name = "#{tag_prefix}/#{version_name}-#{build}" if !output.eql?('tagname') || should_export
 
         if should_export
           export_file_path = params[:export_file]
