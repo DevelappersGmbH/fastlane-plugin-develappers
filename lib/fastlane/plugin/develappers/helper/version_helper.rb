@@ -66,6 +66,26 @@ module Fastlane
                 Helper::ShellHelper.sh(command: "/usr/libexec/PlistBuddy -c \"Print :CFBundleVersion\" #{escaped_info_plist}").to_i
             end
 
+            def self.set_version(options)
+                
+                info_plists = options[:info_plists] || self.info_plists({})
+
+                version_name = options[:version_name]
+                version_code = options[:version_code]
+
+                # set version name
+                info_plists.each do |info_plist|
+                    escaped_info_plist = Shellwords.shellescape info_plist
+                    Helper::ShellHelper.sh(command: "/usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString #{version_name}\" #{escaped_info_plist}")
+                end
+
+                # set version code
+                info_plists.each do |info_plist|
+                    escaped_info_plist = Shellwords.shellescape info_plist
+                    Helper::ShellHelper.sh(command: "/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion #{version_code}\" #{escaped_info_plist}")
+                end
+            end
+
             def self.bump_version(options)
                 bump_type = options[:bump_type]
                 main_info_plist_indicator = options[:main_info_plist_indicator]
@@ -113,11 +133,6 @@ module Fastlane
                     bumped_version = "#{major}.#{minor}.#{patch}"
 
                     UI.verbose "Bump version from #{version} to #{bumped_version}"
-            
-                    info_plists.each do |info_plist|
-                        escaped_info_plist = Shellwords.shellescape info_plist
-                        Helper::ShellHelper.sh(command: "/usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString #{bumped_version}\" #{escaped_info_plist}")
-                    end
                 elsif
                     bumped_version = version
                 end
@@ -128,10 +143,11 @@ module Fastlane
 
                 UI.verbose "Bump build from #{build} to #{bumped_build}"
 
-                info_plists.each do |info_plist|
-                    escaped_info_plist = Shellwords.shellescape info_plist
-                    Helper::ShellHelper.sh(command: "/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion #{bumped_build}\" #{escaped_info_plist}")
-                end
+                self.set_version(
+                    info_plists: info_plists,
+                    version_name: bump_version,
+                    version_code: bumped_build
+                )
 
                 version_label = "v#{bumped_version}-#{bumped_build}"
 

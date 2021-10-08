@@ -21,7 +21,6 @@ module Fastlane
             end
 
             def self.return_value
-                "version name"
             end
 
             def self.details
