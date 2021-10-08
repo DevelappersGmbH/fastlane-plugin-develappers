@@ -3,13 +3,14 @@ module Fastlane
     class BumpVersionAction < Action
       def self.run(params)
         UI.important 'Bump version'
-        Helper::VersionHelper.bump_version({
-                                             bump_type: params[:bump_type],
-                                             configuration: params[:configuration],
-                                             main_info_plist_indicator: params[:main_info_plist_indicator]
-                                           })
-      rescue Exception => e
-        UI.abort_with_message! e.message
+
+        options = {
+          bump_type: params[:bump_type],
+          configuration: params[:configuration],
+          main_info_plist_indicator: params[:main_info_plist_indicator]
+        }
+
+        Helper::VersionHelper.bump_version(options)
       end
 
       def self.description

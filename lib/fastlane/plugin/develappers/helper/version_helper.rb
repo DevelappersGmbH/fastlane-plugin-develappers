@@ -31,10 +31,6 @@ module Fastlane
         # one project found: great
         xcodeproj_path = xcodeproj_paths.first
 
-        # find the pbxproj path, relative to git directory
-        pbxproj_pathname = Pathname.new(File.join(xcodeproj_path, 'project.pbxproj'))
-        pbxproj_path = pbxproj_pathname.relative_path_from(repo_pathname).to_s
-
         # find the info_plist files
         project = Xcodeproj::Project.open(xcodeproj_path)
         project.objects.select do |object|
@@ -100,9 +96,6 @@ module Fastlane
         UI.message 'bump version in info plists:'
         UI.message info_plists
 
-        version = ''
-        build = ''
-
         if !main_info_plist_indicator.nil?
           main_info_plist = info_plists.detect do |p|
             p.include? main_info_plist_indicator
@@ -138,7 +131,8 @@ module Fastlane
           bumped_version = "#{major}.#{minor}.#{patch}"
 
           UI.verbose "Bump version from #{version} to #{bumped_version}"
-        elsif bumped_version = version
+        else
+          bumped_version = version
         end
 
         # Bump Build number

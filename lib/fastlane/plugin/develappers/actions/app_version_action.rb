@@ -61,8 +61,6 @@ module Fastlane
             tag_name: tag_name
           }
         end
-      rescue Exception => e
-        UI.abort_with_message! e.message
       end
 
       def self.description

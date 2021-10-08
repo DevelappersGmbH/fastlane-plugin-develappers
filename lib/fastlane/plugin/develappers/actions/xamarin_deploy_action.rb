@@ -82,9 +82,6 @@ module Fastlane
           app_identifier: app_identifier,
           ipa: ipa_file
         )
-      rescue Exception => e
-        # reraise
-        UI.abort_with_message! e.message
       end
 
       def self.description

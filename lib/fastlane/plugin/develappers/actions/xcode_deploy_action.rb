@@ -86,9 +86,6 @@ module Fastlane
           # tag commit with 'iOS/[version]'
           other_action.add_git_tag(tag: "iOS/#{version}")
         end
-      rescue Exception => e
-        # reraise
-        UI.abort_with_message! e.message
       end
 
       def self.description

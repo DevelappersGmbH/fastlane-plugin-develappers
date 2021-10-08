@@ -47,9 +47,6 @@ module Fastlane
           raise "Unknown bump type '#{bump_type}'"
         end
 
-        version = ''
-        build = ''
-
         version = version(options)
         bumped_version = ''
 
@@ -77,7 +74,8 @@ module Fastlane
           UI.verbose "Bump version from #{version} to #{bumped_version}"
 
           Helper::ShellHelper.sh(command: "/usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString #{bumped_version}\" #{escaped_info_plist}")
-        elsif bumped_version = version
+        else
+          bumped_version = version
         end
 
         # Bump Build number

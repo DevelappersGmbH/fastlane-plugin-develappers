@@ -30,9 +30,6 @@ module Fastlane
         workspace = File.realdirpath(workspace)
 
         other_action.scan(workspace: workspace, scheme: scheme_name)
-      rescue Exception => e
-        # reraise
-        UI.abort_with_message! e.message
       end
 
       def self.description

@@ -8,8 +8,6 @@ module Fastlane
         UI.important "Set version to #{version_name} - #{version_code}"
 
         Helper::VersionHelper.set_version(version_name: version_name, version_code: version_code)
-      rescue Exception => e
-        UI.abort_with_message! e.message
       end
 
       def self.description
