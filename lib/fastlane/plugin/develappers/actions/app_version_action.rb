@@ -5,10 +5,10 @@ module Fastlane
 
                 output = params[:output].downcase
 
-                configuration = params[:configuration].downcase
+                falvor = params[:falvor].downcase
 
                 tag_prefix = "iOS"
-                tag_prefix = "iOS/#{configuration}" unless configuration.nil?
+                tag_prefix = "iOS/#{falvor}" unless falvor.nil?
 
                 should_export = !params[:export_file].nil?
 
@@ -58,7 +58,11 @@ module Fastlane
                 elsif output.eql?("tagname")
                     return tag_name
                 else
-                    return "#{version_name}-#{build}"
+                    return {
+                        version_name: version_name
+                        version_code: build
+                        tag_name: tag_name
+                    }
                 end
             rescue Exception => e
                 UI.abort_with_message! e.message
@@ -83,7 +87,7 @@ module Fastlane
                 [
                     FastlaneCore::ConfigItem.new(key: :app_identifier, env_name: "APP_VERSION_APP_IDENTIFER", description: "App identifier", type: String),
 
-                    FastlaneCore::ConfigItem.new(key: :configuration, env_name: "APP_VERSION_CONFIGURATION", description: "Build configuration", type: String, optional: true, default_value: "Release"),
+                    FastlaneCore::ConfigItem.new(key: :flavor, env_name: "APP_VERSION_FLAVOR", description: "Build flavor", type: String, optional: true, default_value: "Release"),
                     FastlaneCore::ConfigItem.new(key: :output, description: "Output, options are Full|Name|Code|Tagname", type: String, optional: true, default_value: "Full"),
                     FastlaneCore::ConfigItem.new(key: :export_file, description: "If a file is specified, the version information is exported to the file", type: String, optional: true)
                 ]
