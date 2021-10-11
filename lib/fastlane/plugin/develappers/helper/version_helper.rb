@@ -143,7 +143,7 @@ module Fastlane
 
         set_version(
           info_plists: info_plists,
-          version_name: bump_version,
+          version_name: bumped_version,
           version_code: bumped_build
         )
 
