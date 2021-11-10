@@ -6,6 +6,10 @@ module Fastlane
 
         other_action.clean_build_artifacts
 
+        # reset dsym paths to ignore preview build action
+        lane_context[SharedValues::DSYM_OUTPUT_PATH] = nil
+        ENV[SharedValues::DSYM_OUTPUT_PATH.to_s] = nil
+
         loop do
           other_action.download_dsyms(
             app_identifier: params[:app_identifier],
@@ -19,7 +23,6 @@ module Fastlane
             sleep(30)
           else
             other_action.upload_symbols_to_crashlytics(
-              dsym_paths: downloaded_dsym_paths,
               gsp_path: params[:gsp_path]
             )
 
