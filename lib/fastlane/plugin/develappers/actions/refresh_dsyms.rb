@@ -12,13 +12,14 @@ module Fastlane
             version: 'latest'
           )
 
-          downloaded_dsyms = lane_context[SharedValues::DSYM_PATHS] || []
+          downloaded_dsym_paths = lane_context[SharedValues::DSYM_PATHS] || []
 
-          if downloaded_dsyms.empty?
+          if downloaded_dsym_paths.empty?
             UI.message 'Wait 30 seconds and retry'
             sleep(30)
           else
             other_action.upload_symbols_to_crashlytics(
+              dsym_paths: downloaded_dsym_paths,
               gsp_path: params[:gsp_path]
             )
 
