@@ -20,7 +20,7 @@ module Fastlane
 
           UI.message "Tag '#{tag_name}' found" unless tag_name.empty?
 
-          match = tag_name.match(/^.*\/([.\d]*)-?\d*$/s)
+          match = tag_name.match(%r{^.*/([.\d]*)-?\d*$}s)
 
           if match.nil?
             version_name = '0.1.0'
@@ -41,11 +41,12 @@ module Fastlane
 
         if should_export
           export_file_path = params[:export_file]
+          export_prefix = params[:export_prefix]
 
           File.open(export_file_path, 'w') do |file|
-            file.puts("VERSION_NAME=#{version_name}")
-            file.puts("VERSION_CODE=#{build}")
-            file.puts("TAG_NAME=#{tag_name}")
+            file.puts("#{export_prefix}VERSION_NAME=#{version_name}")
+            file.puts("#{export_prefix}VERSION_CODE=#{build}")
+            file.puts("#{export_prefix}TAG_NAME=#{tag_name}")
           end
 
           UI.important "VERSION_NAME, VERSION_CODE and TAG_NAME written to file #{export_file_path}"
@@ -88,9 +89,19 @@ module Fastlane
           FastlaneCore::ConfigItem.new(key: :flavor, env_name: 'APP_VERSION_FLAVOR',
                                        description: 'Build flavor', type: String, optional: true, default_value: nil),
           FastlaneCore::ConfigItem.new(key: :output,
-                                       description: 'Output, options are Full|Name|Code|Tagname', type: String, optional: true, default_value: 'Full'),
+                                       description: 'Output, options are Full|Name|Code|Tagname',
+                                       type: String,
+                                       optional: true,
+                                       default_value: 'Full'),
           FastlaneCore::ConfigItem.new(key: :export_file,
-                                       description: 'If a file is specified, the version information is exported to the file', type: String, optional: true)
+                                       description: 'If a file is specified, the version is exported to the file',
+                                       type: String,
+                                       optional: true),
+          FastlaneCore::ConfigItem.new(key: :export_prefix,
+                                       description: 'Prefix for env vars in exported file',
+                                       type: String,
+                                       optional: true,
+                                       default_value: '')
         ]
       end
 
