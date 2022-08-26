@@ -38,8 +38,10 @@ module Fastlane
           
           if match_build_number.nil?
             build = 1
+            UI.message "Build number is #{build} because of no matching tag"
           else
             build = match_build_number[1].to_i + 1
+            UI.message "Build number is #{build} because of last tag with build number #{tag_name_with_build_number}"
           end
         end
 
