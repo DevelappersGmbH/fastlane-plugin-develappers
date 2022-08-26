@@ -16,11 +16,17 @@ module Fastlane
           # prev. version tag in git
           UI.message "Searching Tag matching '#{tag_prefix}/*'"
 
+          `git tag -d $(git tag -l "#{tag_prefix}/*")`
+          `git fetch --tags`
+
           tag_name = `git describe --tags --match "#{tag_prefix}/*" --abbrev=0`.strip!
+          tag_name_with_build_number = `git tag -l "#{tag_prefix}/*-*" | tail -n1`.strip!
 
           UI.message "Tag '#{tag_name}' found" unless tag_name.empty?
+          UI.message "Tag with latest build number '#{tag_name_with_build_number}' found" unless tag_name_with_build_number.empty?
 
           match = tag_name.match(%r{^.*/([.\d]*)-?\d*$}s)
+          match_build_number = tag_name_with_build_number.match(%r{^.*-(\d*)$}s)
 
           if match.nil?
             version_name = '0.1.0'
@@ -29,12 +35,14 @@ module Fastlane
             version_name = match[1]
             UI.message "Version name is #{version_name} because of last tag #{tag_name}"
           end
-
-        end
-
-        if !output.eql?('name') || should_export
-          build = other_action.latest_testflight_build_number(app_identifier: params[:app_identifier])
-          build += 1
+          
+          if match_build_number.nil?
+            build = 1
+            UI.message "Build number is #{build} because of no matching tag"
+          else
+            build = match_build_number[1].to_i + 1
+            UI.message "Build number is #{build} because of last tag with build number #{tag_name_with_build_number}"
+          end
         end
 
         tag_name = "#{tag_prefix}/#{version_name}-#{build}" if !output.eql?('tagname') || should_export
