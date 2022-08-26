@@ -21,12 +21,16 @@ module Fastlane
 
           tag_name = `git describe --tags --match "#{tag_prefix}/*" --abbrev=0`.strip!
           tag_name_with_build_number = `git tag -l "#{tag_prefix}/*-*" | tail -n1`.strip!
+          
+          unless tag_name.nil? 
+            UI.message "Tag '#{tag_name}' found"
+            match = tag_name.match(%r{^.*/([.\d]*)-?\d*$}s)
+          end
 
-          UI.message "Tag '#{tag_name}' found" unless tag_name.empty?
-          UI.message "Tag with latest build number '#{tag_name_with_build_number}' found" unless tag_name_with_build_number.empty?
-
-          match = tag_name.match(%r{^.*/([.\d]*)-?\d*$}s)
-          match_build_number = tag_name_with_build_number.match(%r{^.*-(\d*)$}s)
+          unless tag_name_with_build_number.nil?
+            UI.message "Tag with latest build number '#{tag_name_with_build_number}' found" 
+            match_build_number = tag_name_with_build_number.match(%r{^.*-(\d*)$}s)
+          end
 
           if match.nil?
             version_name = '0.1.0'
