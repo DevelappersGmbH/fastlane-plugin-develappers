@@ -31,14 +31,12 @@ module Fastlane
 
             if !match[2].empty?
               build = match[2].to_i + 1
+            else
+              major, minor, patch, *rest = version_name.split('.').map { |p| p.to_i }
+              build = major.to_i * 100_000_000 + minor.to_i * 1_000_000 + patch.to_i * 1_000
             end
           end
 
-        end
-
-        if build.nil? && (!output.eql?('name') || should_export)
-          build = other_action.latest_testflight_build_number(app_identifier: params[:app_identifier])
-          build += 1
         end
 
         tag_name = "#{tag_prefix}/#{version_name}-#{build}" if !output.eql?('tagname') || should_export
