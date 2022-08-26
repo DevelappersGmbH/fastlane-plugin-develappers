@@ -32,7 +32,7 @@ module Fastlane
             match_build_number = tag_name_with_build_number.match(%r{^.*-(\d*)$}s)
           end
 
-          if tag_name.nil? || match.nil?
+          if match.nil?
             version_name = '0.1.0'
             UI.message "Version name is #{version_name} because of no matching tag"
           else
@@ -40,7 +40,7 @@ module Fastlane
             UI.message "Version name is #{version_name} because of last tag #{tag_name}"
           end
           
-          if tag_name_with_build_number.nil? || match_build_number.nil?
+          if match_build_number.nil?
             build = 1
             UI.message "Build number is #{build} because of no matching tag"
           else
