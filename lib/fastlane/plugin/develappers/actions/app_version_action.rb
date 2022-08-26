@@ -22,7 +22,7 @@ module Fastlane
           UI.message "Tag '#{tag_name}' found" unless tag_name.empty?
 
           match = tag_name.match(%r{^.*/([.\d]*)-?\d*$}s)
-          match_build_number = tag_name_with_build_number.match(%r{^.*/([.\d]*)-?(\d*)$}s)
+          match_build_number = tag_name_with_build_number.match(%r{^.*/[.\d]*-?(\d*)$}s)
 
           if match.nil?
             version_name = '0.1.0'
