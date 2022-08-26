@@ -34,6 +34,8 @@ module Fastlane
           
           if match_build_number.nil?
             build = match_build_number[1].to_i + 1
+          else
+            build = 1
           end
         end
 
