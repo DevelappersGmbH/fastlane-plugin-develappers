@@ -29,12 +29,14 @@ module Fastlane
             version_name = match[1]
             UI.message "Version name is #{version_name} because of last tag #{tag_name}"
 
-            UI.message match[2]
+            if !match[2].empty?
+              build = match[2] + 1
+            end
           end
 
         end
 
-        if !output.eql?('name') || should_export
+        if build.nil? && (!output.eql?('name') || should_export)
           build = other_action.latest_testflight_build_number(app_identifier: params[:app_identifier])
           build += 1
         end
