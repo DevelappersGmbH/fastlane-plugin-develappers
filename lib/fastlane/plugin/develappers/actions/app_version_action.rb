@@ -20,7 +20,7 @@ module Fastlane
 
           UI.message "Tag '#{tag_name}' found" unless tag_name.empty?
 
-          match = tag_name.match(%r{^.*/([.\d]*)-?\d*$}s)
+          match = tag_name.match(%r{^.*/([.\d]*)-?(\d*)$}s)
 
           if match.nil?
             version_name = '0.1.0'
@@ -28,6 +28,8 @@ module Fastlane
           else
             version_name = match[1]
             UI.message "Version name is #{version_name} because of last tag #{tag_name}"
+
+            UI.message match[2]
           end
 
         end
