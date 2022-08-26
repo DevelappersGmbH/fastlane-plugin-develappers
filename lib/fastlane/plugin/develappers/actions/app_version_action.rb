@@ -17,10 +17,12 @@ module Fastlane
           UI.message "Searching Tag matching '#{tag_prefix}/*'"
 
           tag_name = `git describe --tags --match "#{tag_prefix}/*" --abbrev=0`.strip!
+          tag_name_with_build_number = `git tag -l "iOS/#{tag_prefix}/*-*" | tail -n1`.strip!
 
           UI.message "Tag '#{tag_name}' found" unless tag_name.empty?
 
-          match = tag_name.match(%r{^.*/([.\d]*)-?(\d*)$}s)
+          match = tag_name.match(%r{^.*/([.\d]*)-?\d*$}s)
+          match_build_number = tag_name_with_build_number.match(%r{^.*/([.\d]*)-?(\d*)$}s)
 
           if match.nil?
             version_name = '0.1.0'
@@ -28,15 +30,11 @@ module Fastlane
           else
             version_name = match[1]
             UI.message "Version name is #{version_name} because of last tag #{tag_name}"
-
-            if !match[2].empty?
-              build = match[2].to_i + 1
-            else
-              major, minor, patch, *rest = version_name.split('.').map { |p| p.to_i }
-              build = major.to_i * 100_000_000 + minor.to_i * 1_000_000 + patch.to_i * 1_000
-            end
           end
-
+          
+          if match_build_number.nil?
+            build = match_build_number[1].to_i + 1
+          end
         end
 
         tag_name = "#{tag_prefix}/#{version_name}-#{build}" if !output.eql?('tagname') || should_export
