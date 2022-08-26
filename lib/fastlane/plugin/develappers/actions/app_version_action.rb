@@ -30,7 +30,7 @@ module Fastlane
             UI.message "Version name is #{version_name} because of last tag #{tag_name}"
 
             if !match[2].empty?
-              build = match[2] + 1
+              build = match[2].to_i + 1
             end
           end
 
