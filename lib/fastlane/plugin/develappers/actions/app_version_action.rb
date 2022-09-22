@@ -16,11 +16,8 @@ module Fastlane
           # prev. version tag in git
           UI.message "Searching Tag matching '#{tag_prefix}/*'"
 
-          `git tag -d $(git tag -l "#{tag_prefix}/*")`
-          `git fetch --tags`
-
           tag_name = `git describe --tags --match "#{tag_prefix}/*" --abbrev=0`.strip!
-          tag_name_with_build_number = `git tag --sort=taggerdate -l "#{tag_prefix}/*-*" | tail -n1`.strip!
+          tag_name_with_build_number = `git tag --sort=creatordate -l "#{tag_prefix}/*-*" | tail -n1`.strip!
           
           unless tag_name.nil? 
             UI.message "Tag '#{tag_name}' found"
