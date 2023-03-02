@@ -13,10 +13,15 @@ module Fastlane
 
         import_prefix = "#{flavor.upcase}_"
 
+        UI.message "Looking for env variable '#{import_prefix}VERSION_NAME' and '#{import_prefix}VERSION_CODE'"
+
         version_name = ENV["#{import_prefix}VERSION_NAME"]
         build = ENV["#{import_prefix}VERSION_CODE"]
+        
+        UI.message("env version_name has value #{version_name}")
+        UI.message("env version_code has value #{build}")
 
-        if version_name.nil? || build.nil? || !output.eql?('code') || should_export
+        if (version_name.nil? || build.nil?) && (!output.eql?('code') || should_export)
 
           # prev. version tag in git
           UI.message "Searching Tag matching '#{tag_prefix}/*'"
