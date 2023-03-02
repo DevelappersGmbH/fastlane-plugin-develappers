@@ -26,7 +26,7 @@ module Fastlane
 
           unless tag_name_with_build_number.nil?
             UI.message "Tag with latest build number '#{tag_name_with_build_number}' found" 
-            match_build_number = tag_name_with_build_number.match(%r{^.*-(\d*)$}s)
+            match_build_number = tag_name_with_build_number.match(%r{^(\d*)$}s)
           end
 
           if match.nil?
