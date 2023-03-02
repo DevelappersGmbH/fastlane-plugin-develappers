@@ -17,7 +17,7 @@ module Fastlane
           UI.message "Searching Tag matching '#{tag_prefix}/*'"
 
           tag_name = `git describe --tags --match "#{tag_prefix}/*" --abbrev=0`.strip!
-          tag_name_with_build_number = `git tag --sort=creatordate -l "#{tag_prefix}/*-*" | tail -n1`.strip!
+          tag_name_with_build_number = `git tag -l "#{tag_prefix}/*-*" | cut -d '-' -f2 | sort -n | tail -n1`.strip!
           
           unless tag_name.nil? 
             UI.message "Tag '#{tag_name}' found"
