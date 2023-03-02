@@ -123,7 +123,7 @@ module Fastlane
                                        optional: true,
                                        default_value: ''),
           FastlaneCore::ConfigItem.new(key: :import_file,
-                                       description: 'Import version name and version code from a file, instead of creating new ones from the git history.',
+                                       description: 'Import version name and version code from a file, instead of creating new ones from the git history',
                                        type: String,
                                        optional: true),
           FastlaneCore::ConfigItem.new(key: :import_prefix,
