@@ -1,3 +1,5 @@
+require 'dotenv'
+
 module Fastlane
   module Actions
     class AppVersionAction < Action
@@ -9,15 +11,16 @@ module Fastlane
         tag_prefix = 'iOS'
         tag_prefix = "iOS/#{flavor.downcase}" unless flavor.nil?
 
+        should_import = !params[:import_file].nil?
         should_export = !params[:export_file].nil?
 
-        if !output.eql?('code') || should_export
+        if !should_import && (!output.eql?('code') || should_export)
 
           # prev. version tag in git
           UI.message "Searching Tag matching '#{tag_prefix}/*'"
 
           tag_name = `git describe --tags --match "#{tag_prefix}/*" --abbrev=0`.strip!
-          tag_name_with_build_number = `git tag --sort=creatordate -l "#{tag_prefix}/*-*" | tail -n1`.strip!
+          tag_name_with_build_number = `git tag -l "#{tag_prefix}/*-*" | cut -d '-' -f2 | sort -n | tail -n1`.strip!
           
           unless tag_name.nil? 
             UI.message "Tag '#{tag_name}' found"
@@ -26,7 +29,7 @@ module Fastlane
 
           unless tag_name_with_build_number.nil?
             UI.message "Tag with latest build number '#{tag_name_with_build_number}' found" 
-            match_build_number = tag_name_with_build_number.match(%r{^.*-(\d*)$}s)
+            match_build_number = tag_name_with_build_number.match(%r{^(\d*)$}s)
           end
 
           if match.nil?
@@ -44,6 +47,14 @@ module Fastlane
             build = match_build_number[1].to_i + 1
             UI.message "Build number is #{build} because of last tag with build number #{tag_name_with_build_number}"
           end
+        elsif should_import
+            Dotenv.load(params[:import_file])
+
+            import_prefix = params[:import_prefix]
+
+            version_name = ENV["#{import_prefix}VERSION_NAME"]
+            build = ENV["#{import_prefix}VERSION_CODE"]
+            tag_name = ENV["#{import_prefix}TAG_NAME"]
         end
 
         tag_name = "#{tag_prefix}/#{version_name}-#{build}" if !output.eql?('tagname') || should_export
@@ -108,6 +119,15 @@ module Fastlane
                                        optional: true),
           FastlaneCore::ConfigItem.new(key: :export_prefix,
                                        description: 'Prefix for env vars in exported file',
+                                       type: String,
+                                       optional: true,
+                                       default_value: ''),
+          FastlaneCore::ConfigItem.new(key: :import_file,
+                                       description: 'Import version name and version code from a file, instead of creating new ones from the git history',
+                                       type: String,
+                                       optional: true),
+          FastlaneCore::ConfigItem.new(key: :import_prefix,
+                                       description: 'Prefix for env vars in imported file',
                                        type: String,
                                        optional: true,
                                        default_value: '')
