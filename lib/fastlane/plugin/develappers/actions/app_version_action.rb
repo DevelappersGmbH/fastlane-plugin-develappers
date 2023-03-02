@@ -18,8 +18,8 @@ module Fastlane
         version_name = ENV["#{import_prefix}VERSION_NAME"]
         build = ENV["#{import_prefix}VERSION_CODE"]
         
-        UI.message("env version_name has value #{version_name}")
-        UI.message("env version_code has value #{build}")
+        UI.message("VERSION_NAME has value '#{version_name}'")
+        UI.message("VERSION_CODE has value '#{build}'")
 
         if (version_name.nil? || build.nil?) && (!output.eql?('code') || should_export)
 
