@@ -11,7 +11,7 @@ module Fastlane
 
         should_export = !params[:export_file].nil?
 
-        import_prefix = params[:import_prefix]
+        import_prefix = "#{flavor.upcase}_"
 
         version_name = ENV["#{import_prefix}VERSION_NAME"]
         build = ENV["#{import_prefix}VERSION_CODE"]
@@ -113,11 +113,6 @@ module Fastlane
                                        optional: true),
           FastlaneCore::ConfigItem.new(key: :export_prefix,
                                        description: 'Prefix for env vars in exported file',
-                                       type: String,
-                                       optional: true,
-                                       default_value: ''),
-          FastlaneCore::ConfigItem.new(key: :import_prefix,
-                                       description: 'Prefix for env vars in imported file',
                                        type: String,
                                        optional: true,
                                        default_value: '')
