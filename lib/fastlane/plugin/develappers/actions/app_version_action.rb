@@ -9,10 +9,14 @@ module Fastlane
         tag_prefix = 'iOS'
         tag_prefix = "iOS/#{flavor.downcase}" unless flavor.nil?
 
-        should_import = !params[:import_file].nil?
         should_export = !params[:export_file].nil?
 
-        if !should_import && (!output.eql?('code') || should_export)
+        import_prefix = params[:import_prefix]
+
+        version_name = ENV["#{import_prefix}VERSION_NAME"]
+        build = ENV["#{import_prefix}VERSION_CODE"]
+
+        if version_name.nil? || build.nil? || !output.eql?('code') || should_export
 
           # prev. version tag in git
           UI.message "Searching Tag matching '#{tag_prefix}/*'"
@@ -45,12 +49,6 @@ module Fastlane
             build = match_build_number[1].to_i + 1
             UI.message "Build number is #{build} because of last tag with build number #{tag_name_with_build_number}"
           end
-        elsif should_import
-            import_prefix = params[:import_prefix]
-
-            version_name = ENV["#{import_prefix}VERSION_NAME"]
-            build = ENV["#{import_prefix}VERSION_CODE"]
-            tag_name = ENV["#{import_prefix}TAG_NAME"]
         end
 
         tag_name = "#{tag_prefix}/#{version_name}-#{build}" if !output.eql?('tagname') || should_export
