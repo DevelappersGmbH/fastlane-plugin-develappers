@@ -48,7 +48,7 @@ module Fastlane
             UI.message "Build number is #{build} because of last tag with build number #{tag_name_with_build_number}"
           end
         elsif should_import
-            Dotenv.load(import_file)
+            Dotenv.load(params[:import_file])
 
             import_prefix = params[:import_prefix]
 
