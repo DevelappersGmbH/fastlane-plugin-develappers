@@ -1,5 +1,3 @@
-require 'dotenv'
-
 module Fastlane
   module Actions
     class AppVersionAction < Action
@@ -48,8 +46,6 @@ module Fastlane
             UI.message "Build number is #{build} because of last tag with build number #{tag_name_with_build_number}"
           end
         elsif should_import
-            Dotenv.load(params[:import_file])
-
             import_prefix = params[:import_prefix]
 
             version_name = ENV["#{import_prefix}VERSION_NAME"]
@@ -122,10 +118,6 @@ module Fastlane
                                        type: String,
                                        optional: true,
                                        default_value: ''),
-          FastlaneCore::ConfigItem.new(key: :import_file,
-                                       description: 'Import version name and version code from a file, instead of creating new ones from the git history',
-                                       type: String,
-                                       optional: true),
           FastlaneCore::ConfigItem.new(key: :import_prefix,
                                        description: 'Prefix for env vars in imported file',
                                        type: String,
