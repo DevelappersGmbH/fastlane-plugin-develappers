@@ -42,7 +42,7 @@ module Fastlane
           end
         end
 
-        tag_name = "#{tag_prefix}/#{version_name}-#{build}" if !output.eql?('tagname') || should_export
+        tag_name = "#{tag_prefix}/#{version_name}-#{build_number}" if !output.eql?('tagname') || should_export
 
         if should_export
           export_file_path = params[:export_file]
