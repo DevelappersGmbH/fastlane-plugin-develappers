@@ -21,7 +21,7 @@ module Fastlane
         UI.message("VERSION_NAME has value '#{version_name}'")
         UI.message("BUILD_NUMBER has value '#{build_number}'")
 
-        if (version_name.nil? || build_number.nil?) && (!output.eql?('code') || should_export)
+        if version_name.nil? && (!output.eql?('code') || should_export)
 
           # prev. version tag in git
           UI.message "Searching Tag matching '#{tag_prefix}/*'"
