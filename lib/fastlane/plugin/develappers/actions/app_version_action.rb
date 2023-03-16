@@ -13,30 +13,24 @@ module Fastlane
 
         import_prefix = "#{flavor.upcase}_"
 
-        UI.message "Looking for env variable '#{import_prefix}VERSION_NAME' and '#{import_prefix}VERSION_CODE'"
+        UI.message "Looking for env variable '#{import_prefix}VERSION_NAME' and 'CI_PIPELINE_ID'"
 
         version_name = ENV["#{import_prefix}VERSION_NAME"]
-        build = ENV["#{import_prefix}VERSION_CODE"]
-        
-        UI.message("VERSION_NAME has value '#{version_name}'")
-        UI.message("VERSION_CODE has value '#{build}'")
+        build_number = ENV["CI_PIPELINE_ID"]
 
-        if (version_name.nil? || build.nil?) && (!output.eql?('code') || should_export)
+        UI.message("VERSION_NAME has value '#{version_name}'")
+        UI.message("BUILD_NUMBER has value '#{build_number}'")
+
+        if version_name.nil? && (!output.eql?('code') || should_export)
 
           # prev. version tag in git
           UI.message "Searching Tag matching '#{tag_prefix}/*'"
 
           tag_name = `git describe --tags --match "#{tag_prefix}/*" --abbrev=0`.strip!
-          tag_name_with_build_number = `git tag -l "#{tag_prefix}/*-*" | cut -d '-' -f2 | sort -n | tail -n1`.strip!
-          
-          unless tag_name.nil? 
+
+          unless tag_name.nil?
             UI.message "Tag '#{tag_name}' found"
             match = tag_name.match(%r{^.*/([.\d]*)-?\d*$}s)
-          end
-
-          unless tag_name_with_build_number.nil?
-            UI.message "Tag with latest build number '#{tag_name_with_build_number}' found" 
-            match_build_number = tag_name_with_build_number.match(%r{^(\d*)$}s)
           end
 
           if match.nil?
@@ -46,17 +40,9 @@ module Fastlane
             version_name = match[1]
             UI.message "Version name is #{version_name} because of last tag #{tag_name}"
           end
-          
-          if match_build_number.nil?
-            build = 1
-            UI.message "Build number is #{build} because of no matching tag"
-          else
-            build = match_build_number[1].to_i + 1
-            UI.message "Build number is #{build} because of last tag with build number #{tag_name_with_build_number}"
-          end
         end
 
-        tag_name = "#{tag_prefix}/#{version_name}-#{build}" if !output.eql?('tagname') || should_export
+        tag_name = "#{tag_prefix}/#{version_name}-#{build_number}" if !output.eql?('tagname') || should_export
 
         if should_export
           export_file_path = params[:export_file]
@@ -64,7 +50,7 @@ module Fastlane
 
           File.open(export_file_path, 'w') do |file|
             file.puts("#{export_prefix}VERSION_NAME=#{version_name}")
-            file.puts("#{export_prefix}VERSION_CODE=#{build}")
+            file.puts("#{export_prefix}VERSION_CODE=#{build_number}")
             file.puts("#{export_prefix}TAG_NAME=#{tag_name}")
           end
 
@@ -74,13 +60,13 @@ module Fastlane
         if output.eql?('name')
           version_name
         elsif output.eql?('code')
-          build
+          build_number
         elsif output.eql?('tagname')
           tag_name
         else
           {
             version_name: version_name,
-            version_code: build,
+            version_code: build_number,
             tag_name: tag_name
           }
         end
