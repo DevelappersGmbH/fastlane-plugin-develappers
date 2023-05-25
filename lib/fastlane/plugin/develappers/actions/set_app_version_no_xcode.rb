@@ -1,6 +1,6 @@
 module Fastlane
   module Actions
-    class SetAppVersionAction < Action
+    class SetAppVersionNoXCodeAction < Action
       def self.run(params)
         version_name = params[:version_name]
         version_code = params[:version_code]
@@ -16,7 +16,7 @@ module Fastlane
       end
 
       def self.authors
-        ['Johannes Starke']
+        ['Niklas Werner']
       end
 
       def self.return_value; end
