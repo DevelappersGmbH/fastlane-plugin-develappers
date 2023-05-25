@@ -71,16 +71,7 @@ module Fastlane
           configuration: configuration
         )
 
-        UI.message 'Successfully builded solution'
-
-        # commit version and tag
-        UI.important 'Commit version and add tag'
-
-        UI.message "Adding #{info_plist_file} to git"
-        Helper::GitHelper.commit(
-          path: info_plist_file,
-          message: "Bump version to #{version}"
-        )
+        UI.message 'Successfully built solution'
       end
 
       def self.description
@@ -183,6 +174,8 @@ module Fastlane
         params[:additional_arguments].each do |param|
           command << " #{param}"
         end
+
+        UI.message "Executing: #{msbuild}"
 
         Helper::ShellHelper.sh command: command
       end
