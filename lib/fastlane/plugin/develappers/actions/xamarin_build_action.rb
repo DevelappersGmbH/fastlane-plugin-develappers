@@ -172,7 +172,7 @@ module Fastlane
         platform = params[:platform]
         solution = params[:solution]
 
-        msbuild = params[:msbuild_path] ? File.join(params[:msbuild_path], 'msbuild') : 'dotnet msbuild'
+        msbuild = 'dotnet msbuild'
         command = "#{msbuild} \"#{solution}\""
         params[:targets].each do |target|
           command << " /t:\"#{target}\""
