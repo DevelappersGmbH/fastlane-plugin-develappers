@@ -175,7 +175,7 @@ module Fastlane
           command << " #{param}"
         end
 
-        UI.message "Executing: #{msbuild}"
+        UI.message "Executing: #{command}"
 
         Helper::ShellHelper.sh command: command
       end
