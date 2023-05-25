@@ -25,7 +25,7 @@ module Fastlane
         configuration = params[:configuration]
 
         # set version
-        version_info = app_version(
+        version_info = other_action.app_version(
           app_identifier: app_identifier,
           flavor: flavor,
           output: 'full'
@@ -36,7 +36,7 @@ module Fastlane
         version_name = version_info[:version_name]
         version_code = version_info[:version_code]
 
-        set_app_version_no_x_code(
+        other_action.set_app_version_no_x_code(
           info_plists: [info_plist_file],
           version_name: version_name,
           version_code: version_code
