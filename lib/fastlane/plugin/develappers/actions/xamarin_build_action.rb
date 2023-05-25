@@ -9,6 +9,7 @@ module Fastlane
         solution_folder = params[:solution_folder]
         solution_name = params[:solution_name]
         info_plist_file = params[:info_plist_file]
+        flavor = params[:flavor]
 
         solution_file = "#{solution_folder}#{solution_name}.sln"
 
@@ -117,7 +118,9 @@ module Fastlane
           FastlaneCore::ConfigItem.new(key: :configuration, env_name: 'BUILD_XAMARIN_CONFIGURATION',
                                        description: 'Build configuration', type: String, optional: true, default_value: 'Release'),
           FastlaneCore::ConfigItem.new(key: :app_identifier, env_name: 'BUILD_XAMARIN_APP_IDENTIFER',
-                                       description: 'App identifier', type: String, optional: true)
+                                       description: 'App identifier', type: String, optional: true),
+          FastlaneCore::ConfigItem.new(key: :flavor, env_name: 'FLAVOR',
+                                       description: 'Flavor', type: String)
         ]
       end
 
