@@ -124,7 +124,7 @@ module Fastlane
       #################
 
       def self.restore_packages(options)
-        Helper::ShellHelper.sh(command: "dotnet restore #{options[:solution]}", log: false)
+        Helper::ShellHelper.sh(command: "nuget restore #{options[:solution]}", log: false)
       end
 
       def self.build_release(options)
@@ -162,8 +162,7 @@ module Fastlane
         configuration = params[:configuration]
         platform = params[:platform]
         solution = params[:solution]
-
-        msbuild = 'dotnet msbuild'
+        msbuild = params[:msbuild_path] ? File.join(params[:msbuild_path], 'msbuild') : 'msbuild'
         command = "#{msbuild} \"#{solution}\""
         params[:targets].each do |target|
           command << " /t:\"#{target}\""
