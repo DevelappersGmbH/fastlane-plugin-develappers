@@ -133,7 +133,7 @@ module Fastlane
       #################
 
       def self.restore_packages(options)
-        Helper::ShellHelper.sh(command: "nuget restore #{options[:solution]}", log: false)
+        Helper::ShellHelper.sh(command: "dotnet restore #{options[:solution]}", log: false)
       end
 
       def self.build_release(options)
